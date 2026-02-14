@@ -1,7 +1,7 @@
 ---
 description: |
   This workflow creates daily repo status reports. It gathers recent repository
-  activity (issues, PRs, discussions, releases, code changes) and generates
+  activity (issues, PRs, discussions, releases, code changes readme) and generates
   engaging GitHub issues with productivity insights, community highlights,
   and project recommendations.
 
@@ -18,10 +18,9 @@ network: defaults
 
 tools:
   github:
-    # If in a public repo, setting `lockdown: false` allows
-    # reading issues, pull requests and comments from 3rd-parties
-    # If in a private repo this has no particular effect.
-    lockdown: false
+  bash: [":*"]
+  web-fetch:
+
 
 safe-outputs:
   create-issue:
@@ -32,11 +31,11 @@ source: githubnext/agentics/workflows/daily-repo-status.md@69b5e3ae5fa7f35fa555b
 
 # Daily Repo Status
 
-Create an upbeat daily status report for the repo as a GitHub issue.
+Create an upbeat daily status report for the repo as a GitHub issue. Don't forget about the readme file. It might have important information.
 
 ## What to include
 
-- Recent repository activity (issues, PRs, discussions, releases, code changes)
+- Recent repository activity (issues, PRs, discussions, releases, code changes, readme)
 - Progress tracking, goal reminders and highlights
 - Project status and recommendations
 - Actionable next steps for maintainers
