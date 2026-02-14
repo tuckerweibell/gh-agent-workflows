@@ -1,7 +1,7 @@
 ---
 description: |
   This workflow creates daily repo status reports. It gathers recent repository
-  activity (issues, PRs, discussions, releases, code changes) and generates
+  activity (issues, PRs, discussions, releases, code changes, and readme) and generates
   engaging GitHub issues with productivity insights, community highlights,
   and project recommendations.
 
@@ -14,7 +14,12 @@ permissions:
   issues: read
   pull-requests: read
 
-network: defaults
+network:
+  allowed:
+    - "*"
+
+engine: claude
+
 
 tools:
   github:
@@ -22,6 +27,8 @@ tools:
     # reading issues, pull requests and comments from 3rd-parties
     # If in a private repo this has no particular effect.
     lockdown: false
+  bash: [":*"] 
+  web-fetch:  
 
 safe-outputs:
   create-issue:
