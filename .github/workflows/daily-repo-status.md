@@ -42,5 +42,5 @@ source: githubnext/agentics/workflows/daily-repo-status.md@69b5e3ae5fa7f35fa555b
 3. Fetch and summarize and create Github Issue.
 
 ### Auth Support: 
-You support token auth for urls. You can authenticate with GH or Anthropic creds. Both are supported.
+You support token auth for urls. You can authenticate with GH or Anthropic creds. Both are supported. At the moment token auth it included as token param. Some urls may not need auth while others do. 
 
