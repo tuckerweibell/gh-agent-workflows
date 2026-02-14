@@ -8,12 +8,11 @@ on:
     types: [opened, edited]
   workflow_dispatch:
 
+strict: false
+
 permissions:
   contents: read
   issues: read
-  pull-requests: read
-
-strict: false
 
 network:
   allowed:
@@ -25,8 +24,16 @@ engine:
 
 tools:
   github:
+    lockdown: false
+    toolsets: [repos, issues]
   bash: [":*"] 
   web-fetch:  
+
+safe-outputs:
+  add-comment:
+    max: 3                       # max comments (default: 1)
+    target: "*"                  # "triggering" (default), "*", or number
+
 ---
 
 # Automated Link Summarization for Triggering GitHub Issue
