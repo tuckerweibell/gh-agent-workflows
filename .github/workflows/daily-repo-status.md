@@ -14,6 +14,8 @@ permissions:
   issues: read
   pull-requests: read
 
+strict: false
+
 network:
   allowed:
     - "*"
