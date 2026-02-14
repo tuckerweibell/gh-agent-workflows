@@ -1,9 +1,6 @@
 ---
 description: |
-  This workflow creates daily repo status reports. It gathers recent repository
-  activity (issues, PRs, discussions, releases, code changes, and readme) and generates
-  engaging GitHub issues with productivity insights, community highlights,
-  and project recommendations.
+  This workflow creates daily repo status reports based on the README.md
 
 on:
   schedule: daily
@@ -41,23 +38,18 @@ source: githubnext/agentics/workflows/daily-repo-status.md@69b5e3ae5fa7f35fa555b
 
 # Daily Repo Status
 
-Create an upbeat daily status report for the repo as a GitHub issue.
+Create a status reports based on the README.md or info in the README.md. You may need to fetch this.
 
 ## What to include
 
-- Recent repository activity (issues, PRs, discussions, releases, code changes)
-- Progress tracking, goal reminders and highlights
-- Project status and recommendations
-- Actionable next steps for maintainers
+- README or content fetched from README
 
 ## Style
 
-- Be positive, encouraging, and helpful 🌟
-- Use emojis moderately for engagement
-- Keep it concise - adjust length based on actual activity
+- Be positive, encouraging, and helpful
 
 ## Process
 
-1. Gather recent activity from the repository
-2. Study the repository, its issues and its pull requests
-3. Create a new GitHub issue with your findings and insights
+1. Check out the README
+2. Gather data as needed
+3. Create a new GitHub issue with your findings

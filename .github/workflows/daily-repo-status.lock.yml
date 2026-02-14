@@ -21,14 +21,11 @@
 #
 # For more information: https://github.github.com/gh-aw/introduction/overview/
 #
-# This workflow creates daily repo status reports. It gathers recent repository
-# activity (issues, PRs, discussions, releases, code changes, and readme) and generates
-# engaging GitHub issues with productivity insights, community highlights,
-# and project recommendations.
+# This workflow creates daily repo status reports based on the README.md
 #
 # Source: githubnext/agentics/workflows/daily-repo-status.md@69b5e3ae5fa7f35fa555b0a22aee14c36ab57ebb
 #
-# frontmatter-hash: d3a44f7f53795de111dff342ce2e6e12fc97e513fcc4b55029184eb70e013660
+# frontmatter-hash: ebee3628b8b410ed1d75383a2365c14676e86a7f42bf0879c4e74c86a610b2ee
 
 name: "Daily Repo Status"
 "on":
@@ -955,7 +952,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           WORKFLOW_NAME: "Daily Repo Status"
-          WORKFLOW_DESCRIPTION: "This workflow creates daily repo status reports. It gathers recent repository\nactivity (issues, PRs, discussions, releases, code changes, and readme) and generates\nengaging GitHub issues with productivity insights, community highlights,\nand project recommendations."
+          WORKFLOW_DESCRIPTION: "This workflow creates daily repo status reports based on the README.md"
           HAS_PATCH: ${{ needs.agent.outputs.has_patch }}
         with:
           script: |
