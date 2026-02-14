@@ -21,11 +21,11 @@
 #
 # For more information: https://github.github.com/gh-aw/introduction/overview/
 #
-# Fetch and summarize URLs in the read.
+# Fetch and summarize URLs in the readme.md.
 #
 # Source: githubnext/agentics/workflows/daily-repo-status.md@69b5e3ae5fa7f35fa555b0a22aee14c36ab57ebb
 #
-# frontmatter-hash: 7b6697b4b4f1dd9c224aef4e4be556b491cf12ccc6f55e22cfcfdd78947659c6
+# frontmatter-hash: 0b92212bf7e28cb873e4de5e78489fcf4a7ccd8e943ef5a46ef16ef2a7652a9e
 
 name: "Super Awesome Helpful External Link Content Summarizer (Supports Auth!)"
 "on":
@@ -952,7 +952,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           WORKFLOW_NAME: "Super Awesome Helpful External Link Content Summarizer (Supports Auth!)"
-          WORKFLOW_DESCRIPTION: "Fetch and summarize URLs in the read."
+          WORKFLOW_DESCRIPTION: "Fetch and summarize URLs in the readme.md."
           HAS_PATCH: ${{ needs.agent.outputs.has_patch }}
         with:
           script: |

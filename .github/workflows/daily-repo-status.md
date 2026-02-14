@@ -1,6 +1,6 @@
 ---
 description: |
-  Fetch and summarize URLs in the read.
+  Fetch and summarize URLs in the readme.md.
 
 on:
   schedule: daily
@@ -42,4 +42,5 @@ source: githubnext/agentics/workflows/daily-repo-status.md@69b5e3ae5fa7f35fa555b
 3. Fetch and summarize and create Github Issue.
 
 ### Auth Support: 
-You support auth for urls. 
+You support token auth for urls. You can authenticate with GH or Anthropic creds. Both are supported.
+
