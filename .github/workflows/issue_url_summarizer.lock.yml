@@ -21,12 +21,11 @@
 #
 # For more information: https://github.github.com/gh-aw/introduction/overview/
 #
-# Automatically detect, fetch, and summarize URLs found in triggering GitHub issue.
-# Posts summary as comments on issue to provide context without leaving GitHub.
+# Output the env for debugging using bash tool.
 #
-# frontmatter-hash: 152af82fd36730719159f4a8eca60be0417baa2bd0591f58e26a8a7c6a00f148
+# frontmatter-hash: 52ce2131f52701198552fc3f8eafe6791222366b70adfadeeeb73ba9ed00f16b
 
-name: "Automated Link Summarization for Triggering GitHub Issue"
+name: "Output env with bash tool"
 "on":
   issues:
     types:
@@ -39,7 +38,7 @@ permissions: {}
 concurrency:
   group: "gh-aw-${{ github.workflow }}-${{ github.event.issue.number }}"
 
-run-name: "Automated Link Summarization for Triggering GitHub Issue"
+run-name: "Output env with bash tool"
 
 jobs:
   activation:
@@ -72,7 +71,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: read
     env:
       DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
       GH_AW_ASSETS_ALLOWED_EXTS: ""
@@ -140,7 +138,7 @@ jobs:
               version: "",
               agent_version: "2.1.39",
               cli_version: "v0.43.23",
-              workflow_name: "Automated Link Summarization for Triggering GitHub Issue",
+              workflow_name: "Output env with bash tool",
               experimental: false,
               supports_tools_allowlist: true,
               supports_http_transport: true,
@@ -153,12 +151,12 @@ jobs:
               actor: context.actor,
               event_name: context.eventName,
               staged: false,
-              allowed_domains: ["*"],
-              firewall_enabled: false,
-              awf_version: "",
+              allowed_domains: ["defaults"],
+              firewall_enabled: true,
+              awf_version: "v0.17.0",
               awmg_version: "",
               steps: {
-                firewall: ""
+                firewall: "squid"
               },
               created_at: new Date().toISOString()
             };
@@ -182,10 +180,12 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
+      - name: Install awf binary
+        run: bash /opt/gh-aw/actions/install_awf_binary.sh v0.17.0
       - name: Install Claude Code CLI
         run: npm install -g --silent @anthropic-ai/claude-code@2.1.39
       - name: Download container images
-        run: bash /opt/gh-aw/actions/download_docker_images.sh ghcr.io/github/gh-aw-mcpg:v0.1.4 ghcr.io/github/github-mcp-server:v0.30.3 node:lts-alpine
+        run: bash /opt/gh-aw/actions/download_docker_images.sh ghcr.io/github/gh-aw-firewall/agent:0.17.0 ghcr.io/github/gh-aw-firewall/api-proxy:0.17.0 ghcr.io/github/gh-aw-firewall/squid:0.17.0 ghcr.io/github/gh-aw-mcpg:v0.1.4 ghcr.io/github/github-mcp-server:v0.30.3 node:lts-alpine
       - name: Write Safe Outputs Config
         run: |
           mkdir -p /opt/gh-aw/safeoutputs
@@ -641,8 +641,8 @@ jobs:
         timeout-minutes: 20
         run: |
           set -o pipefail
-                    # Execute Claude Code CLI with prompt from file
-                    claude --print --disable-slash-commands --no-chrome --model claude-haiku-4-5 --mcp-config /tmp/gh-aw/mcp-config/mcp-servers.json --allowed-tools Bash,BashOutput,Edit,ExitPlanMode,Glob,Grep,KillBash,LS,MultiEdit,NotebookEdit,NotebookRead,Read,Task,TodoWrite,WebFetch,Write,mcp__github__download_workflow_run_artifact,mcp__github__get_code_scanning_alert,mcp__github__get_commit,mcp__github__get_dependabot_alert,mcp__github__get_discussion,mcp__github__get_discussion_comments,mcp__github__get_file_contents,mcp__github__get_job_logs,mcp__github__get_label,mcp__github__get_latest_release,mcp__github__get_me,mcp__github__get_notification_details,mcp__github__get_pull_request,mcp__github__get_pull_request_comments,mcp__github__get_pull_request_diff,mcp__github__get_pull_request_files,mcp__github__get_pull_request_review_comments,mcp__github__get_pull_request_reviews,mcp__github__get_pull_request_status,mcp__github__get_release_by_tag,mcp__github__get_secret_scanning_alert,mcp__github__get_tag,mcp__github__get_workflow_run,mcp__github__get_workflow_run_logs,mcp__github__get_workflow_run_usage,mcp__github__issue_read,mcp__github__list_branches,mcp__github__list_code_scanning_alerts,mcp__github__list_commits,mcp__github__list_dependabot_alerts,mcp__github__list_discussion_categories,mcp__github__list_discussions,mcp__github__list_issue_types,mcp__github__list_issues,mcp__github__list_label,mcp__github__list_notifications,mcp__github__list_pull_requests,mcp__github__list_releases,mcp__github__list_secret_scanning_alerts,mcp__github__list_starred_repositories,mcp__github__list_tags,mcp__github__list_workflow_jobs,mcp__github__list_workflow_run_artifacts,mcp__github__list_workflow_runs,mcp__github__list_workflows,mcp__github__pull_request_read,mcp__github__search_code,mcp__github__search_issues,mcp__github__search_orgs,mcp__github__search_pull_requests,mcp__github__search_repositories,mcp__github__search_users --debug-file /tmp/gh-aw/agent-stdio.log --verbose --permission-mode bypassPermissions --output-format stream-json "$(cat /tmp/gh-aw/aw-prompts/prompt.txt)" 2>&1 | tee -a /tmp/gh-aw/agent-stdio.log
+          sudo -E awf --tty --env-all --container-workdir "${GITHUB_WORKSPACE}" --allow-domains '*.githubusercontent.com,anthropic.com,api.anthropic.com,api.github.com,api.snapcraft.io,archive.ubuntu.com,azure.archive.ubuntu.com,cdn.playwright.dev,codeload.github.com,crl.geotrust.com,crl.globalsign.com,crl.identrust.com,crl.sectigo.com,crl.thawte.com,crl.usertrust.com,crl.verisign.com,crl3.digicert.com,crl4.digicert.com,crls.ssl.com,files.pythonhosted.org,ghcr.io,github-cloud.githubusercontent.com,github-cloud.s3.amazonaws.com,github.com,host.docker.internal,json-schema.org,json.schemastore.org,keyserver.ubuntu.com,lfs.github.com,objects.githubusercontent.com,ocsp.digicert.com,ocsp.geotrust.com,ocsp.globalsign.com,ocsp.identrust.com,ocsp.sectigo.com,ocsp.ssl.com,ocsp.thawte.com,ocsp.usertrust.com,ocsp.verisign.com,packagecloud.io,packages.cloud.google.com,packages.microsoft.com,playwright.download.prss.microsoft.com,ppa.launchpad.net,pypi.org,raw.githubusercontent.com,registry.npmjs.org,s.symcb.com,s.symcd.com,security.ubuntu.com,sentry.io,statsig.anthropic.com,ts-crl.ws.symantec.com,ts-ocsp.ws.symantec.com' --log-level info --proxy-logs-dir /tmp/gh-aw/sandbox/firewall/logs --enable-host-access --image-tag 0.17.0 --skip-pull --enable-api-proxy \
+            -- /bin/bash -c 'export PATH="$(find /opt/hostedtoolcache -maxdepth 4 -type d -name bin 2>/dev/null | tr '\''\n'\'' '\'':'\'')$PATH"; [ -n "$GOROOT" ] && export PATH="$GOROOT/bin:$PATH" || true && claude --print --disable-slash-commands --no-chrome --model claude-haiku-4-5 --mcp-config /tmp/gh-aw/mcp-config/mcp-servers.json --allowed-tools Bash,BashOutput,Edit,ExitPlanMode,Glob,Grep,KillBash,LS,MultiEdit,NotebookEdit,NotebookRead,Read,Task,TodoWrite,WebFetch,Write,mcp__github__download_workflow_run_artifact,mcp__github__get_code_scanning_alert,mcp__github__get_commit,mcp__github__get_dependabot_alert,mcp__github__get_discussion,mcp__github__get_discussion_comments,mcp__github__get_file_contents,mcp__github__get_job_logs,mcp__github__get_label,mcp__github__get_latest_release,mcp__github__get_me,mcp__github__get_notification_details,mcp__github__get_pull_request,mcp__github__get_pull_request_comments,mcp__github__get_pull_request_diff,mcp__github__get_pull_request_files,mcp__github__get_pull_request_review_comments,mcp__github__get_pull_request_reviews,mcp__github__get_pull_request_status,mcp__github__get_release_by_tag,mcp__github__get_secret_scanning_alert,mcp__github__get_tag,mcp__github__get_workflow_run,mcp__github__get_workflow_run_logs,mcp__github__get_workflow_run_usage,mcp__github__issue_read,mcp__github__list_branches,mcp__github__list_code_scanning_alerts,mcp__github__list_commits,mcp__github__list_dependabot_alerts,mcp__github__list_discussion_categories,mcp__github__list_discussions,mcp__github__list_issue_types,mcp__github__list_issues,mcp__github__list_label,mcp__github__list_notifications,mcp__github__list_pull_requests,mcp__github__list_releases,mcp__github__list_secret_scanning_alerts,mcp__github__list_starred_repositories,mcp__github__list_tags,mcp__github__list_workflow_jobs,mcp__github__list_workflow_run_artifacts,mcp__github__list_workflow_runs,mcp__github__list_workflows,mcp__github__pull_request_read,mcp__github__search_code,mcp__github__search_issues,mcp__github__search_orgs,mcp__github__search_pull_requests,mcp__github__search_repositories,mcp__github__search_users --debug-file /tmp/gh-aw/agent-stdio.log --verbose --permission-mode bypassPermissions --output-format stream-json "$(cat /tmp/gh-aw/aw-prompts/prompt.txt)"' 2>&1 | tee -a /tmp/gh-aw/agent-stdio.log
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           BASH_DEFAULT_TIMEOUT_MS: 60000
@@ -705,7 +705,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           GH_AW_SAFE_OUTPUTS: ${{ env.GH_AW_SAFE_OUTPUTS }}
-          GH_AW_ALLOWED_DOMAINS: "*,*.githubusercontent.com,anthropic.com,api.anthropic.com,api.github.com,api.snapcraft.io,archive.ubuntu.com,azure.archive.ubuntu.com,cdn.playwright.dev,codeload.github.com,crl.geotrust.com,crl.globalsign.com,crl.identrust.com,crl.sectigo.com,crl.thawte.com,crl.usertrust.com,crl.verisign.com,crl3.digicert.com,crl4.digicert.com,crls.ssl.com,files.pythonhosted.org,ghcr.io,github-cloud.githubusercontent.com,github-cloud.s3.amazonaws.com,github.com,host.docker.internal,json-schema.org,json.schemastore.org,keyserver.ubuntu.com,lfs.github.com,objects.githubusercontent.com,ocsp.digicert.com,ocsp.geotrust.com,ocsp.globalsign.com,ocsp.identrust.com,ocsp.sectigo.com,ocsp.ssl.com,ocsp.thawte.com,ocsp.usertrust.com,ocsp.verisign.com,packagecloud.io,packages.cloud.google.com,packages.microsoft.com,playwright.download.prss.microsoft.com,ppa.launchpad.net,pypi.org,raw.githubusercontent.com,registry.npmjs.org,s.symcb.com,s.symcd.com,security.ubuntu.com,sentry.io,statsig.anthropic.com,ts-crl.ws.symantec.com,ts-ocsp.ws.symantec.com"
+          GH_AW_ALLOWED_DOMAINS: "*.githubusercontent.com,anthropic.com,api.anthropic.com,api.github.com,api.snapcraft.io,archive.ubuntu.com,azure.archive.ubuntu.com,cdn.playwright.dev,codeload.github.com,crl.geotrust.com,crl.globalsign.com,crl.identrust.com,crl.sectigo.com,crl.thawte.com,crl.usertrust.com,crl.verisign.com,crl3.digicert.com,crl4.digicert.com,crls.ssl.com,files.pythonhosted.org,ghcr.io,github-cloud.githubusercontent.com,github-cloud.s3.amazonaws.com,github.com,host.docker.internal,json-schema.org,json.schemastore.org,keyserver.ubuntu.com,lfs.github.com,objects.githubusercontent.com,ocsp.digicert.com,ocsp.geotrust.com,ocsp.globalsign.com,ocsp.identrust.com,ocsp.sectigo.com,ocsp.ssl.com,ocsp.thawte.com,ocsp.usertrust.com,ocsp.verisign.com,packagecloud.io,packages.cloud.google.com,packages.microsoft.com,playwright.download.prss.microsoft.com,ppa.launchpad.net,pypi.org,raw.githubusercontent.com,registry.npmjs.org,s.symcb.com,s.symcd.com,security.ubuntu.com,sentry.io,statsig.anthropic.com,ts-crl.ws.symantec.com,ts-ocsp.ws.symantec.com"
           GITHUB_SERVER_URL: ${{ github.server_url }}
           GITHUB_API_URL: ${{ github.api_url }}
         with:
@@ -741,6 +741,16 @@ jobs:
             setupGlobals(core, github, context, exec, io);
             const { main } = require('/opt/gh-aw/actions/parse_mcp_gateway_log.cjs');
             await main();
+      - name: Print firewall logs
+        if: always()
+        continue-on-error: true
+        env:
+          AWF_LOGS_DIR: /tmp/gh-aw/sandbox/firewall/logs
+        run: |
+          # Fix permissions on firewall logs so they can be uploaded as artifacts
+          # AWF runs with sudo, creating files owned by root
+          sudo chmod -R a+r /tmp/gh-aw/sandbox/firewall/logs 2>/dev/null || true
+          awf logs summary | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Upload agent artifacts
         if: always()
         continue-on-error: true
@@ -751,6 +761,7 @@ jobs:
             /tmp/gh-aw/aw-prompts/prompt.txt
             /tmp/gh-aw/aw_info.json
             /tmp/gh-aw/mcp-logs/
+            /tmp/gh-aw/sandbox/firewall/logs/
             /tmp/gh-aw/agent-stdio.log
             /tmp/gh-aw/agent/
           if-no-files-found: ignore
@@ -794,7 +805,7 @@ jobs:
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
           GH_AW_NOOP_MAX: 1
-          GH_AW_WORKFLOW_NAME: "Automated Link Summarization for Triggering GitHub Issue"
+          GH_AW_WORKFLOW_NAME: "Output env with bash tool"
         with:
           github-token: ${{ secrets.GH_AW_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
@@ -807,7 +818,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
-          GH_AW_WORKFLOW_NAME: "Automated Link Summarization for Triggering GitHub Issue"
+          GH_AW_WORKFLOW_NAME: "Output env with bash tool"
         with:
           github-token: ${{ secrets.GH_AW_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
@@ -820,7 +831,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
-          GH_AW_WORKFLOW_NAME: "Automated Link Summarization for Triggering GitHub Issue"
+          GH_AW_WORKFLOW_NAME: "Output env with bash tool"
           GH_AW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           GH_AW_AGENT_CONCLUSION: ${{ needs.agent.result }}
           GH_AW_WORKFLOW_ID: "issue_url_summarizer"
@@ -838,7 +849,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
-          GH_AW_WORKFLOW_NAME: "Automated Link Summarization for Triggering GitHub Issue"
+          GH_AW_WORKFLOW_NAME: "Output env with bash tool"
           GH_AW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           GH_AW_AGENT_CONCLUSION: ${{ needs.agent.result }}
           GH_AW_NOOP_MESSAGE: ${{ steps.noop.outputs.noop_message }}
@@ -858,7 +869,7 @@ jobs:
           GH_AW_COMMENT_ID: ${{ needs.activation.outputs.comment_id }}
           GH_AW_COMMENT_REPO: ${{ needs.activation.outputs.comment_repo }}
           GH_AW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          GH_AW_WORKFLOW_NAME: "Automated Link Summarization for Triggering GitHub Issue"
+          GH_AW_WORKFLOW_NAME: "Output env with bash tool"
           GH_AW_AGENT_CONCLUSION: ${{ needs.agent.result }}
           GH_AW_DETECTION_CONCLUSION: ${{ needs.detection.result }}
         with:
@@ -902,8 +913,8 @@ jobs:
       - name: Setup threat detection
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
-          WORKFLOW_NAME: "Automated Link Summarization for Triggering GitHub Issue"
-          WORKFLOW_DESCRIPTION: "Automatically detect, fetch, and summarize URLs found in triggering GitHub issue.\nPosts summary as comments on issue to provide context without leaving GitHub."
+          WORKFLOW_NAME: "Output env with bash tool"
+          WORKFLOW_DESCRIPTION: "Output the env for debugging using bash tool."
           HAS_PATCH: ${{ needs.agent.outputs.has_patch }}
         with:
           script: |
@@ -1020,7 +1031,7 @@ jobs:
       GH_AW_ENGINE_ID: "claude"
       GH_AW_ENGINE_MODEL: "claude-haiku-4-5"
       GH_AW_WORKFLOW_ID: "issue_url_summarizer"
-      GH_AW_WORKFLOW_NAME: "Automated Link Summarization for Triggering GitHub Issue"
+      GH_AW_WORKFLOW_NAME: "Output env with bash tool"
     outputs:
       create_discussion_error_count: ${{ steps.process_safe_outputs.outputs.create_discussion_error_count }}
       create_discussion_errors: ${{ steps.process_safe_outputs.outputs.create_discussion_errors }}
